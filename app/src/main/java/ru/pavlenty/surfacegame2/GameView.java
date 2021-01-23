@@ -19,6 +19,7 @@ public class GameView extends SurfaceView implements Runnable {
     volatile boolean playing;
     private Thread gameThread = null;
     private Player player;
+    private Friend friend;
 
     private Paint paint;
     private Canvas canvas;
@@ -29,17 +30,11 @@ public class GameView extends SurfaceView implements Runnable {
     int screenX;
     int countMisses;
 
-    boolean flag ;
-
-
+    boolean flag;
     private boolean isGameOver;
-
-
     int score;
 
-
     int highScore[] = new int[4];
-
 
     SharedPreferences sharedPreferences;
 
@@ -61,6 +56,9 @@ public class GameView extends SurfaceView implements Runnable {
             Star s = new Star(screenX, screenY);
             stars.add(s);
         }
+
+        // добавляем новый объект - Friend
+        friend = new Friend(context, screenX, screenY);
 
         this.screenX = screenX;
         countMisses = 0;
@@ -95,7 +93,6 @@ public class GameView extends SurfaceView implements Runnable {
             case MotionEvent.ACTION_DOWN:
                 player.setBoosting();
                 break;
-
         }
 
         if(isGameOver){
@@ -139,6 +136,12 @@ public class GameView extends SurfaceView implements Runnable {
                     player.getY(),
                     paint);
 
+            // отрисовка Friend
+            canvas.drawBitmap(
+                    friend.getBitmap(),
+                    friend.getX(),
+                    friend.getY(),
+                    paint);
 
             if(isGameOver){
                 paint.setTextSize(150);
@@ -163,6 +166,8 @@ public class GameView extends SurfaceView implements Runnable {
 
         player.update();
 
+        // обновление у Friend
+        friend.update(player.getSpeed());
 
         for (Star s : stars) {
             s.update(player.getSpeed());
