@@ -1,5 +1,6 @@
 package ru.pavlenty.surfacegame2;
 
+
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -7,8 +8,7 @@ import android.util.Log;
 
 import java.util.Random;
 
-public class Friend {
-
+public class Boom {
     private Bitmap bitmap;
     private int x;
     private int y;
@@ -20,24 +20,16 @@ public class Friend {
     private int minX;
     private int minY;
 
-    public Friend(Context context, int screenX, int screenY) {
+    public Boom(Context context, int screenX, int screenY) {
         Log.d("RRR screenX",Integer.toString(screenX));
 
-        this.bitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.friend);
+        this.bitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.boom);
         this.maxX = screenX;
         this.maxY = screenY;
         this.minX = 0;
         this.minY = 0;
-        Random r = new Random();
-        speed = r.nextInt(6)+10;
-        x = screenX;
-        y = r.nextInt(this.maxY);
-    }
-
-    public void update(int playerSpeed) {
-        x -= playerSpeed;
-        x -= speed;
-
+        x = -200;
+        y = -200;
     }
 
     public Bitmap getBitmap() {
@@ -50,5 +42,13 @@ public class Friend {
 
     public int getY() {
         return y;
+    }
+
+    public void setX(int x) {
+        this.x = x;
+    }
+
+    public void setY(int y) {
+        this.y = y;
     }
 }

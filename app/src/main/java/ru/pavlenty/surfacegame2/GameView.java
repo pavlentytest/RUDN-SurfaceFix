@@ -20,12 +20,16 @@ public class GameView extends SurfaceView implements Runnable {
     private Thread gameThread = null;
     private Player player;
     private Friend friend;
+    private Enemy enemy;
+    private Boom boom;
 
     private Paint paint;
     private Canvas canvas;
     private SurfaceHolder surfaceHolder;
 
-    private ArrayList<Star> stars = new ArrayList<Star>();
+    private ArrayList<Star> stars = new ArrayList<>();
+
+    private ArrayList<Friend> friends = new ArrayList<>();
 
     int screenX;
     int countMisses;
@@ -57,8 +61,18 @@ public class GameView extends SurfaceView implements Runnable {
             stars.add(s);
         }
 
+        int frNums = 10;
+        for(int i=0;i<frNums;i++) {
+            Friend f = new Friend(context,screenX,screenY);
+            friends.add(f);
+        }
+
+        enemy = new Enemy(context, screenX, screenY);
+
+        boom = new Boom(context, screenX, screenY);
+
         // добавляем новый объект - Friend
-        friend = new Friend(context, screenX, screenY);
+       // friend = new Friend(context, screenX, screenY);
 
         this.screenX = screenX;
         countMisses = 0;
@@ -81,7 +95,7 @@ public class GameView extends SurfaceView implements Runnable {
         gameOversound = MediaPlayer.create(context,R.raw.gameover);
 
 
-        gameOnsound.start();
+       // gameOnsound.start();
     }
 
     @Override
@@ -136,13 +150,30 @@ public class GameView extends SurfaceView implements Runnable {
                     player.getY(),
                     paint);
 
+            for (Friend f : friends) {
+                canvas.drawBitmap(
+                        f.getBitmap(),
+                        f.getX(),
+                        f.getY(),
+                        paint);
+            }
+
+              canvas.drawBitmap(
+                    enemy.getBitmap(),
+                    enemy.getX(),
+                    enemy.getY(),
+                    paint);
+
+
+
             // отрисовка Friend
-            canvas.drawBitmap(
+          /*  canvas.drawBitmap(
                     friend.getBitmap(),
                     friend.getX(),
                     friend.getY(),
                     paint);
 
+           */
             if(isGameOver){
                 paint.setTextSize(150);
                 paint.setTextAlign(Paint.Align.CENTER);
@@ -167,10 +198,25 @@ public class GameView extends SurfaceView implements Runnable {
         player.update();
 
         // обновление у Friend
-        friend.update(player.getSpeed());
+        //friend.update(player.getSpeed());
 
         for (Star s : stars) {
             s.update(player.getSpeed());
+        }
+
+        for(Friend f: friends) {
+            f.update(player.getSpeed());
+        }
+
+        // столкновение
+        if (Rect.intersects(player.getDetectCollision(),enemy.getDetectCollision())) {
+            // получим координаты столкновения
+            int x = enemy.getX();
+            int y = enemy.getY();
+            boom.setX(x);
+            boom.setY(y);
+
+            killedEnemysound.start();
         }
     }
 
